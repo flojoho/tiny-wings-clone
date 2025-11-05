@@ -6,19 +6,21 @@ INBOX
 
 
 
-mvp: gravity, model player as point, elastic collision, (no controls, no auto velocity, fixed camera)
 
+
+
+
+TODO / PRIO
+
+mvp: gravity, model player as point, elastic collision, (no controls, no auto velocity, fixed camera)
 
 dec: how to realize ground collision?
   mvp: check if velocity vector intersects any of the ground segments (treat player as point for now)
   option: just check if player object is below the terrain surface
     player could pass through terrain peaks this way though (not such a big deal for an mvp though)
 
-
 dec: treat player as point object or circle?
   if circle: figure out how circle/sement collision works
-
-
 
 
 collision response
@@ -33,9 +35,6 @@ kamera
   ausschnitt
 
 minimum velocity in x-direction (or other solution that achieves the same thing)
-
-
-
 
 
 
