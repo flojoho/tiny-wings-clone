@@ -12,6 +12,8 @@ INBOX
 
 TODO / PRIO
 
+port to typescript
+
 cache values of visible terrain (only recompute point if it was never calculated)
 
 mvp: gravity, model player as point, elastic collision, (no controls, no auto velocity, fixed camera)

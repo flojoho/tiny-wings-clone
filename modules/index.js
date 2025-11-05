@@ -1,37 +1,13 @@
 import Camera from './Camera.js';
-import VisibleTerrain from './VisibleTerrain.js';
+import Terrain from './Terrain.js';
 import Ball from './Ball.js';
 
 let canvas = document.getElementById('canvas');
 let c = canvas.getContext('2d');
 
 const fps = 50;
-
 const interval = 10;
-const radius = 10;
-
 let g = 0.5;
-
-let xMin;
-let xMax;
-
-const visibleTerrain = {
-  minIndex: 0,
-  maxIndex: 0
-};
-
-const interpolatedTerrain = arg => {
-  //überprüfen, ob arg eh nicht genau mit einem vertex übereinstimmt
-  
-  let nextLowerX = Math.floor(arg/interval) * interval;
-  let nextHigherX = (nextLowerX + 1) * interval;
-
-  const f = VisibleTerrain.terrainFunction;
-  
-  //todo: i should really make this easier to read
-  //it's basically just linear interpolation
-  return f(nextLowerX) + ( f(nextHigherX) - f(nextLowerX) ) * (arg - nextLowerX) / (nextHigherX - nextLowerX);
-}
 
 const shiftAndZoom = terrainPoints => {
   return terrainPoints.map(point => {
@@ -42,7 +18,7 @@ const shiftAndZoom = terrainPoints => {
   });
 }
 
-const draw = terrainPoints => {
+const drawTerrain = terrainPoints => {
   c.fillStyle = '#000000';
   c.fillRect(0, 0, canvas.width, canvas.height);
   
@@ -54,19 +30,13 @@ const draw = terrainPoints => {
   });
   c.lineTo(canvas.width, canvas.height);
   c.fill();
-
-  
-  c.fillStyle = '#ffffff';
-  c.beginPath();
-  c.arc(200, Ball.y, radius, 0, 2*Math.PI); //x und y und radius müssen von der kameraeinstellung abhängen
-  c.fill();
 }
 
-const collisionDetected = function() {
-  //todo: do a collision detection with all segments containing the x-interval (ball.x - radius, ball.x + radius)
-  
-  //todo: testing collision of line segment against last (or current?) velocity vector (line segment vs line segment collision)
-  return (Ball.y >= interpolatedTerrain(Ball.x));
+const drawBall = () => {
+  c.fillStyle = '#ffffff';
+  c.beginPath();
+  c.arc(200, Ball.y, Ball.radius, 0, 2*Math.PI); //x und y und radius müssen von der kameraeinstellung abhängen
+  c.fill();
 }
 
 const collisionResponse = function() {
@@ -109,14 +79,15 @@ const eventLoop = function() {
   const xMax = xMin + canvas.width + 200; //only for testing
 
   //koordinaten des sichtbaren terrains im standardraum ausrechnen
-  const terrainPoints = VisibleTerrain.recalculate(xMin, xMax);
+  const terrainPoints = Terrain.getVisiblePoints(xMin, xMax);
   
   //transform coordinates of all objects to camera position and zoom
   const renderedTerrain = shiftAndZoom(terrainPoints);
   
-  draw(renderedTerrain);
+  drawTerrain(renderedTerrain);
+  drawBall();
   
-  if(collisionDetected()) collisionResponse();
+  if(Terrain.checkCollision()) collisionResponse();
   
   physics();
 }
